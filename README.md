@@ -28,7 +28,19 @@ The script uses the model identifier `llama3:latest` through Ollama's local HTTP
 
 `http://localhost:11434/api/generate`
 
-The model runs locally. The exact Ollama version, model quantization, and any additional generation parameters should be recorded from the experimental environment.
+The model runs locally on the experimental machine. Its configuration, as reported by `ollama show llama3:latest`, is:
+
+| Property | Value |
+|---|---|
+| Architecture | Llama |
+| Parameters | 8.0 billion (8B) |
+| Context length | 8192 tokens |
+| Embedding length | 4096 |
+| Quantization | Q4_0 |
+| Capability | Completion |
+| Model license | Meta Llama 3 Community License Agreement |
+
+The model is executed locally through Ollama. Generation settings, when explicitly specified in the Python script, should be documented separately from the model's architecture and quantization details.
 
 ## Repository Structure
 
