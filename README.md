@@ -2,91 +2,86 @@
 
 ## Overview
 
-This repository contains the Python implementation of an experimental extension to the PEnnet threat modeling workflow. The extension integrates a locally executed Large Language Model (LLM) to generate pre-conditions and post-conditions for threats already included in the PEnnet Threat Catalogue.
+This repository contains a Python-based experimental extension to the PEnnet threat modeling workflow. It uses a locally executed Large Language Model (LLM) to generate pre-conditions and post-conditions for threats in an existing threat catalogue.
 
-The generated conditions are compared with the corresponding reference values to evaluate the model's output.
+The generated conditions are compared with the reference values in the catalogue to measure agreement.
 
 ## Objectives
 
-- Automate the generation of pre-conditions and post-conditions associated with existing threats.
-- Integrate a local LLM into the threat modeling workflow.
-- Compare generated conditions with the reference Threat Catalogue.
-- Export structured results for subsequent analysis.
+- Generate pre-conditions and post-conditions for existing threats.
+- Integrate a local LLM through Ollama.
+- Compare generated conditions with reference values.
+- Export structured results for analysis.
 
-## Workflow
+## Technologies
 
-1. Read the threat catalogue from an Excel file.
-2. Extract the information describing each threat.
-3. Construct a prompt containing the threat details.
-4. Send the prompt to the LLM through Ollama.
-5. Parse the model response in JSON format.
-6. Compare generated conditions with the reference values.
-7. Export the results to an Excel file.
-
-## Technology Stack
-
-- **Programming language:** Python
-- **LLM runtime:** Ollama
-- **Model:** Llama 3
-- **Input format:** Excel (`.xlsx`)
-- **Output format:** Excel (`.xlsx`)
-- **LLM response format:** JSON
+- Python
+- Ollama
+- Llama 3 (`llama3:latest`)
+- pandas
+- requests
+- openpyxl
 
 ## Model Configuration
 
-The implementation uses the Ollama model identifier `llama3:latest` and communicates with the local endpoint:
+The script uses the model identifier `llama3:latest` through Ollama's local HTTP API:
 
 `http://localhost:11434/api/generate`
 
-The model is executed locally. The exact model version, quantization, and generation parameters should be documented according to the configuration used in the experiment.
+The model runs locally. The exact Ollama version, model quantization, and any additional generation parameters should be recorded from the experimental environment.
 
-## Pre-conditions and Post-conditions
+## Repository Structure
 
-For each threat, the model evaluates the impact on:
+```text
+pennet-llm-extension/
+├── data/
+│   └── README.md
+├── results/
+│   └── README.md
+├── generate_conditions.py
+├── requirements.txt
+└── README.md
+```
 
-- **Confidentiality (C)**
-- **Integrity (I)**
-- **Availability (A)**
+## Input Data
 
-The expected values are:
+Place the input Excel workbook at:
+
+`data/threat_catalogue.xlsx`
+
+The workbook must contain the columns expected by the script, including threat identifiers, asset information, threat descriptions, STRIDE categories, and reference pre-conditions and post-conditions.
+
+## Output
+
+The script writes the results to:
+
+`results/llama_conditions_results.xlsx`
+
+The output includes the reference and generated conditions, matching scores, and the raw model response when available.
+
+## Workflow
+
+1. Load the threat catalogue from Excel.
+2. Extract each threat's information.
+3. Construct a prompt containing the threat details.
+4. Send the prompt to Ollama.
+5. Parse and validate the JSON response.
+6. Compare the generated conditions with the reference values.
+7. Export the results to Excel.
+
+## Condition Representation
+
+The model returns three values in the order Confidentiality (C), Integrity (I), and Availability (A), for both pre-conditions and post-conditions.
 
 - `n`: no impact
 - `p`: partial impact
 - `f`: full impact
 
-The expected JSON response contains two arrays:
-
-- `PreCondition`: values representing the conditions before the threat occurs.
-- `PostCondition`: values representing the conditions after the threat occurs.
-
-Example of the expected output structure:
-
-```json
-{
-  "PreCondition": ["n", "n", "n"],
-  "PostCondition": ["n", "n", "f"]
-}
-```
-
-The values above are illustrative and do not represent the assessment of a specific threat.
-
-## Evaluation
-
-The generated values are compared with the corresponding values in the original catalogue. The output includes the threat identifier, reference conditions, generated conditions, matching scores, and the raw model response when available.
-
-The comparison measures agreement with the reference catalogue; it does not independently guarantee the semantic correctness of the generated conditions.
-
-## Requirements
-
-- Python 3
-- Ollama
-- Llama 3 available through Ollama
-- Python packages listed in `requirements.txt`
-- An input Excel file containing the columns expected by the script
+The expected response contains `PreCondition` and `PostCondition` arrays, each with exactly three values.
 
 ## Installation
 
-Install Ollama and download the model:
+Install Python 3 and Ollama. Download the model:
 
 ```bash
 ollama pull llama3:latest
@@ -98,42 +93,42 @@ Install the Python dependencies:
 pip install -r requirements.txt
 ```
 
-Verify that the model is available:
-
-```bash
-ollama list
-```
-
-Ensure that Ollama is running before executing the Python script.
+Ensure that Ollama is running before executing the script.
 
 ## Execution
 
-Run the Python script from the project directory:
+From the repository root, run:
 
 ```bash
-python src/generate_conditions.py
+python generate_conditions.py
 ```
 
-The input and output paths must be configured according to the instructions provided with the implementation.
+The script expects the input file at `data/threat_catalogue.xlsx` and creates the output directory and result file automatically.
+
+## Evaluation
+
+Each generated pre-condition and post-condition is compared with the corresponding reference values. The script reports matches for the pre-condition (out of 3), post-condition (out of 3), and combined score (out of 6).
+
+Agreement with the reference catalogue is a measure of correspondence; it does not independently guarantee semantic correctness.
 
 ## Security and Privacy
 
-- No API keys, passwords, or personal credentials are required for the local Ollama endpoint used by this implementation.
-- Input datasets and generated results should be checked for confidential or personal information before publication.
-- Local execution does not by itself guarantee the security of the host machine or its files.
-- Generated conditions should be reviewed before being used in security assessments.
+- Do not commit passwords, API keys, access tokens, or personal credentials.
+- Review input and output files before sharing them.
+- Do not publish confidential or personal information.
+- Local inference does not automatically guarantee that the host system and files are secure.
 
 ## Limitations
 
-- Results depend on the quality and completeness of the threat descriptions.
-- The model may produce malformed JSON or incorrect assessments.
-- Generated values should be validated against the reference catalogue.
-- Results may vary with the model version and generation configuration.
+- Output quality depends on the threat descriptions and the model's response.
+- The model may generate invalid or incorrect values.
+- Results should be reviewed against the reference catalogue.
+- Results may vary with model versions and configurations.
 
 ## Reproducibility
 
-For reproducibility, document the Python and Ollama versions, exact model identifier, prompt, generation parameters, input dataset structure, and package versions used in the experiment.
+For reproducibility, record the Python version, Ollama version, exact model version, prompt, generation settings, and input dataset structure used in the experiment.
 
 ## License
 
-The repository license has not yet been specified. Before distributing the code publicly, verify the licensing conditions of the original PEnnet project and any third-party components.
+Before distributing this code publicly, verify the licensing conditions of the original PEnnet project and all third-party components. No license has been specified for this repository yet.
