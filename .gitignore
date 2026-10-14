@@ -218,3 +218,23 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+secrets.*
+*credentials*
+
+# Experimental input and output files
+data/*
+!data/README.md
+results/*
+!results/README.md
+
+# Excel files
+*.xlsx
+*.xls
+
+# Local logs
+*.log
