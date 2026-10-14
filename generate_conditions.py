@@ -5,7 +5,7 @@ import pandas as pd
 import requests
 
 # Paths are relative to the repository root.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 INPUT_EXCEL = BASE_DIR / "data" / "threat_catalogue.xlsx"
 OUTPUT_EXCEL = BASE_DIR / "results" / "llama_conditions_results.xlsx"
 
